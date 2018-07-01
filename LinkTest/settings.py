@@ -124,3 +124,9 @@ STATICFILES_DIRS = (
 )
 
 API_DIRS = os.path.join(BASE_DIR, 'conf')
+API_CONF = 'api.properties'
+API_FILE = "{}/{}".format(API_DIRS, API_CONF)
+
+HTTP_DATA = os.path.join(BASE_DIR, 'data')
+HTTP_FILES = 'proxy_data.json'
+HTTP_PROXY_FILE = '{}/{}'.format(HTTP_DATA, HTTP_FILES)

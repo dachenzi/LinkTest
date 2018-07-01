@@ -15,11 +15,9 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-import link.views
 import GetIpAddress.views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    # url(r'', link.views.index),
-    url(r'ip/', GetIpAddress.views.get_ip_address),
+    url(r'^$', GetIpAddress.views.index),
 ]
