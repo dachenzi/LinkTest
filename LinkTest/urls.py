@@ -20,4 +20,12 @@ import GetIpAddress.views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', GetIpAddress.views.index),
+    url(r'proxy_info.html', GetIpAddress.views.proxy_index),
+    url(r'agent_info.html', GetIpAddress.views.agent_index),
+    url(r'url_info.html', GetIpAddress.views.url_index),
+    url(r'add_agent.html', GetIpAddress.views.add_agent),
+    url(r'add_url.html', GetIpAddress.views.add_url),
+    url(r'delete_agent.html', GetIpAddress.views.delete_agent),
+    url(r'delete_url.html', GetIpAddress.views.delete_url),
+    url(r'update', GetIpAddress.views.update),
 ]

@@ -1,0 +1,72 @@
+{% extends 'index.html' %}
+
+{% block css %}
+    <style>
+        .table-responsive {
+            margin-left: 10px
+        }
+    </style>
+{% endblock %}
+
+
+{% block content_title %}
+    <h1 class="page-head-line">Url 信息</h1>
+{% endblock %}
+
+{% block content_main %}
+    {% if available_url %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th style="text-align: center">名称</th>
+                    <th style="text-align: center">Url地址</th>
+                    <th style="text-align: center">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for url in available_url %}
+                    <tr style="text-align: center" hid="{{ url.id }}">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ url.UrlName }}</td>
+                        <td>{{ url.UrlAddress }}</td>
+                        <td>
+                            <button type="button" class="btn btn-info" data-toggle="modal" name="deleurl"
+                                    data-target="#delhost" url_id="{{ url.id }}">
+                                删除
+                            </button>
+                        </td>
+
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <h4 style="text-align: center">没有要监测的Url</h4>
+    {% endif %}
+{% endblock %}
+
+{% block content_bottom %}
+
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $("[name='deleurl']").click(function () {
+            $.ajax({
+                url: '/delete_url.html',
+                type: 'post',
+                dataType: 'json',
+                data: {'id': $(this).attr('url_id'), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                success: function (data) {
+                    if (data.status) {
+                        window.location.href = '/url_info.html';
+                    }
+                }
+            })
+        });
+    </script>
+{% endblock %}

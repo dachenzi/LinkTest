@@ -1,0 +1,126 @@
+{% extends 'index.html' %}
+{% block css %}
+
+    <style>
+        .table-responsive {
+            margin-left: 10px
+        }
+
+        #background {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            background-color: darkgray;
+            opacity: 0.6;
+            z-index: 8;
+        }
+
+        #delete {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            margin-top: -150px;
+            margin-left: -250px;
+            z-index: 9;
+        }
+
+    </style>
+
+{% endblock %}
+
+
+{% block content_title %}
+    <h1 class="page-head-line">Proxy 信息</h1>
+{% endblock %}
+
+{% block content_main %}
+    <div class="table-responsive">
+        {#        <button type="button" class="btn btn-success" name="allcheck">#}
+        {#            全选#}
+        {#        </button>#}
+        {#        <button type="button" class="btn btn-primary" name="revcheck">#}
+        {#            反选#}
+        {#        </button>#}
+        {#        <button type="button" class="btn btn-warning" name="allcancel">#}
+        {#            取消#}
+        {#        </button>#}
+        {#        <button type="button" class="btn btn-danger" name="delete">#}
+        {#            删除#}
+        {#        </button>#}
+        <button type="button" class="btn btn-success" name="update">
+            更新
+        </button>
+    </div>
+    {% if available_proxy %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th style="text-align: center">HTTP代理地址</th>
+                    <th style="text-align: center">ISP</th>
+                    <th style="text-align: center">过期时间</th>
+                    <th style="text-align: center">归属地</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for proxy in available_proxy %}
+                    <tr style="text-align: center" hid="{{ proxy.id }}">
+                        <td><input type="checkbox"></td>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ proxy.IP }}</td>
+                        <td>{{ proxy.ISP }}</td>
+                        <td>{{ proxy.ExpireTime }}</td>
+                        <td>{{ proxy.IpAddress }}</td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <h2 style="text-align: center">没有可用的proxy代理地址</h2>
+    {% endif %}
+{% endblock %}
+
+{% block content_bottom %}
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $("[name='allcheck']").click(function () {
+            $('table').find($('input')).each(function () {
+                $(this).prop('checked', true)
+            })
+        });
+
+        $("[name='allcancel']").click(function () {
+            $('table').find($('input')).each(function () {
+                $(this).prop('checked', false)
+            })
+        });
+
+        $("[name='revcheck']").click(function () {
+            $('table').find($('input')).each(function () {
+                $(this).prop('checked', !$(this).prop('checked'));
+            })
+        });
+
+        $("[name='update']").click(function () {
+            $.ajax({
+                url: '/update',
+                type: 'get',
+                success: function (data) {
+                    if (data.status) {
+                        {#window.location.href = '/proxy_info.html'#}
+                        window.location.href = '/proxy_info.html'
+                    }
+                }
+            })
+        });
+
+    </script>
+{% endblock %}

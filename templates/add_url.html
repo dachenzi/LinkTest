@@ -1,0 +1,78 @@
+{% extends 'index.html' %}
+
+{% block css %}
+    <style>
+        .warning {
+            color: red;
+        }
+    </style>
+{% endblock %}
+
+{% block content_title %}
+    <h1 class="page-head-line">添加Url</h1>
+    <h1 class="page-subhead-line"><strong style="font-family: Consolas;font-style:normal">请详细确认Url信息是否正确</strong></h1>
+{% endblock %}
+
+{% block content_main %}
+    <div class="col-md-12">
+        <form class="form-horizontal" id = 'url-form' novalidate>
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="hostname" class="col-sm-2 control-label">Url 名称</label>
+                <div class="col-sm-6">
+                    {{ url_add.UrlName }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="ip" class="col-sm-2 control-label">Url 地址</label>
+                <div class="col-sm-6">
+                    {{ url_add.UrlAddress }}
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-8">
+                    <a href="#" class="btn btn-success" id="ok">确认</a>
+                    <a href="/url_info.html" class="btn btn-primary" >取消</a>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block content_bottom %}
+
+{% endblock %}
+
+{% block javascript %}
+
+    <script>
+        $('#ok').click(function () {
+            $('#url-form').find('.warning').each(function () {
+                $(this).text('');  {# 每次点击初始化标签 #}
+            });
+
+            $.ajax({
+                url:'/add_url.html',
+                type:'post',
+                dataType:'json',
+                data:$('#url-form').serialize(),
+                success:function (data) {
+                    if (data.status) {
+                        window.location.href = '/url_info.html'
+                    } else {
+                         $.each(data.err_msg,function (key,value) {
+                            var $span = document.createElement('span');
+                             $span.setAttribute('class','warning');
+                             $span.innerHTML = value;
+                            $('#'+ key).after($span);
+                        })
+                    }
+                }
+            })
+
+        })
+    </script>
+
+
+
+{% endblock %}

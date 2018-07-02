@@ -1,0 +1,108 @@
+{% extends 'index.html' %}
+
+{% block css %}
+    <style>
+        .warning {
+            color: red;
+        }
+
+        .waiting {
+            color: green;
+        }
+    </style>
+{% endblock %}
+
+{% block content_title %}
+    <h1 class="page-head-line">添加 Agent</h1>
+    <h1 class="page-subhead-line"><strong style="font-family: Consolas;font-style:normal">请详细确认Agent信息是否正确</strong></h1>
+{% endblock %}
+
+{% block content_main %}
+    <div class="col-md-12">
+        <form class="form-horizontal" id='agent-form' novalidate>
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="hostname" class="col-sm-2 control-label">Agent 名称</label>
+                <div class="col-sm-6">
+                    {{ agent_add.AgentName }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="ip" class="col-sm-2 control-label">Agent IP地址</label>
+                <div class="col-sm-6">
+                    {{ agent_add.AgentIP }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="port" class="col-sm-2 control-label">Port</label>
+                <div class="col-sm-6">
+                    {{ agent_add.AgentPort }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="col-sm-2 control-label">Key</label>
+                <div class="col-sm-6">
+                    {{ agent_add.Key }}
+                </div>
+            </div>
+            <div class="form-group">
+
+                <label for="" class="col-sm-2 control-label" id="invalid"></label>
+
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-8">
+                    <a href="#" class="btn btn-success" id="ok">确认</a>
+                    <a href="/agent_info.html" class="btn btn-primary">取消</a>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block content_bottom %}
+
+{% endblock %}
+
+{% block javascript %}
+
+    <script>
+        $('#ok').click(function () {
+
+            $('#agent-form').find('.warning').each(function () {
+                $(this).text('');
+                {# 每次点击初始化标签 #}
+            });
+
+            var $span = document.createElement('span');
+            $span.setAttribute('class', 'waiting');
+            $span.setAttribute('id', 'info');
+            $span.innerHTML = '连接Agent中，请稍等';
+            $('#invalid').after($span);
+
+            $.ajax({
+                url: '/add_agent.html',
+                type: 'POST',
+                dataType: 'json',
+                data: $('#agent-form').serialize(),
+                success: function (data) {
+                    if (data.status) {
+                        window.location.href = '/agent_info.html'
+                    } else {
+                        $.each(data.err_msg, function (key, value) {
+                            var $span = document.createElement('span');
+                            $span.setAttribute('class', 'warning');
+                            $span.innerHTML = value;
+                            $('#info').remove();
+                            $('#' + key).after($span);
+                        })
+                    }
+                }
+            })
+
+        })
+    </script>
+
+
+
+{% endblock %}

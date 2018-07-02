@@ -14,4 +14,12 @@ class HttpProxyInfo(models.Model):
 class AgentInfo(models.Model):
     AgentName = models.CharField(max_length=16, verbose_name='客户端名称')
     AgentIP = models.GenericIPAddressField(max_length=16, verbose_name='客户端地址')
+    AgentPort = models.IntegerField(max_length=16, verbose_name='端口', default=0)
     Key = models.CharField(max_length=32, verbose_name='认证key信息')
+    Used = models.IntegerField(default=0)
+
+
+class UrlInfo(models.Model):
+    UrlName = models.CharField(max_length=16, verbose_name='Url名称')
+    UrlAddress = models.CharField(max_length=128, verbose_name='Url地址')
+    Used = models.IntegerField(default=0)

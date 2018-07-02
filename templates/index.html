@@ -1,0 +1,203 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Dashboard</title>
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/font-awesome.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/basic.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/custom.css' %}" rel="stylesheet"/>
+    {% block css %}
+    {% endblock %}
+
+
+</head>
+<body>
+<div id="wrapper">
+    <nav class="navbar navbar-default navbar-cls-top " role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/" style="background-color: #2c3e50;">链路管理平台</a>
+        </div>
+        <div class="header-right">
+            <a href="#" class="btn btn-default" title="New Message"><b>30 </b><i
+                    class="fa fa-envelope-o fa-2x"></i></a>
+            <a href="#" class="btn btn-default" title="New Task"><b>40 </b><i
+                    class="fa fa-bars fa-2x"></i></a>
+            <a href="#" class="btn btn-default" title="Logout"><i
+                    class="fa fa-exclamation-circle fa-2x"></i></a>
+        </div>
+    </nav>
+
+    <nav class="navbar-default navbar-side" role="navigation">
+        <div class="sidebar-collapse">
+            <ul class="nav" id="main-menu">
+                <li>
+                    <div class="user-img-div" style="background-color: #202020">
+                        <img src="{% static 'images/logo.jpg' %}" class="img-thumbnail"/>
+                        <div class="inner-text">
+                            {{ request.session.user }}
+                            <br/>
+                            <small>上一次登陆时间：2017/09/21</small>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <a class="title" href="/"><i class="fa fa-dashboard "></i>Dashboard</a>
+                </li>
+                <li>
+                    <a href="/proxy_info.html" class="title">
+                        <i class="glyphicon glyphicon-option-horizontal"></i>Proxy</a>
+                </li>
+                <li>
+                    <a href="#" class="title"><i
+                            class="glyphicon glyphicon-globe"></i>Agent<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="/agent_info.html" class="title"><i class="fa fa-toggle-on"></i>Agent 信息</a>
+                        </li>
+                        <li>
+                            <a href="/add_agent.html" class="title"><i class="fa fa-bell "></i>添加 Agent</a>
+                        </li>
+
+                    </ul>
+                </li>
+                 <li>
+                    <a href="#" class="title"><i
+                            class="glyphicon glyphicon-globe"></i>Url<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="/url_info.html" class="title"><i class="fa fa-toggle-on"></i>Url 信息</a>
+                        </li>
+                        <li>
+                            <a href="/add_url.html" class="title"><i class="fa fa-bell "></i>添加 Url</a>
+                        </li>
+
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="title"><i
+                            class="glyphicon glyphicon-th-list"></i>Task<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="#" class="title"><i class="fa fa-car "></i>自动任务</a>
+                        </li>
+                        <li>
+                            <a href="#" class="title"><i class="fa fa-bicycle "></i>定制任务</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#" class="title">
+                        <i class="glyphicon glyphicon-option-horizontal"></i>Other</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div id="page-wrapper">
+        <div id="page-inner">
+            <div class="row">
+                <div class="col-md-12">
+                    {% block content_title %}
+                        <h1 class="page-head-line">平台介绍</h1>
+                        <h1 class="page-subhead-line">
+                            <strong style="font-family: Consolas;font-style:normal">链路监控平台用于对业务前台网站进行访问检测</strong>
+                        </h1>
+                    {% endblock %}
+                </div>
+            </div>
+            <div class="row">
+                {% block content_main %}
+                    <div class="col-md-4">
+                        <div class="main-box mb-red">
+                            <a href="/proxy_info.html">
+                                <i class="fa fa-bolt fa-5x"></i>
+                                <h5>{{ available_proxy.count }} proxy</h5>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="main-box mb-dull">
+                            <a href="/agent_info.html">
+                                <i class="fa fa-plug fa-5x"></i>
+                                <h5>{{ available_agent.count }} agent</h5>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="main-box mb-pink">
+                            <a href="/url_info.html">
+                                <i class="fa fa-dollar fa-5x"></i>
+                                <h5>{{ available_url.count }} URL</h5>
+                            </a>
+                        </div>
+                    </div>
+                    </div>
+                {% endblock %}
+            {% block content_bottom %}
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="reviews" class="carousel slide" data-ride="carousel">
+                                    <div class="carousel-inner">
+                                        <div class="item active">
+                                            <div class="col-md-10 col-md-offset-1">
+                                                <h4><i class="fa"></i>运维工程师面对的最大挑战是大规模集群的管理问题，如何管理好几十万台服务器上的服务，同时保障服务的高可用性，是运维工程师面临的最大挑战。
+                                                    <i class="fa"></i></h4>
+                                                <div class="user-img pull-right">
+                                                </div>
+                                                <h5 class="pull-right"><strong class="c-black">Learn More</strong></h5>
+                                            </div>
+                                        </div>
+                                        <div class="item">
+                                            <div class="col-md-10 col-md-offset-1">
+                                                <h4><i class="fa"></i>无论做什么运维，运维工程师最基本的职责都是负责服务的稳定性，确保服务可以7*24H不间断地为用户提供服务<i
+                                                        class="fa"></i></h4>
+                                                <div class="user-img pull-right">
+                                                </div>
+                                                <h5 class="pull-right"><strong class="c-black">Learn More</strong></h5>
+                                            </div>
+                                        </div>
+                                        <div class="item">
+                                            <div class="col-md-10 col-md-offset-1">
+                                                <h4><i class="fa"></i>负责维护并确保整个服务的高可用性，同时不断优化系统架构、提升部署效率、优化资源利用率提高整体的ROI.
+                                                    <i class="fa fa-quote-right"></i></h4>
+                                                <h5 class="pull-right"><strong class="c-black">Learn More</strong></h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ol class="carousel-indicators">
+                                        <li data-target="#reviews" data-slide-to="0" class="active"></li>
+                                        <li data-target="#reviews" data-slide-to="1"></li>
+                                        <li data-target="#reviews" data-slide-to="2"></li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                    </div>
+                </div>
+            {% endblock %}
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/jquery-3.2.1.js' %}"></script>
+<script src="{% static 'js/bootstrap.js' %}"></script>
+<script src="{% static 'js/jquery.metisMenu.js' %}"></script>
+<script src="{% static 'js/custom.js' %}"></script>
+
+{% block javascript %}
+{% endblock %}
+
+</body>
+</html>

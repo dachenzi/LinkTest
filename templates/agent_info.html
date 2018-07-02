@@ -1,0 +1,74 @@
+{% extends 'index.html' %}
+
+{% block css %}
+    <style>
+        .table-responsive {
+            margin-left: 10px
+        }
+    </style>
+{% endblock %}
+
+
+{% block content_title %}
+    <h1 class="page-head-line">Agent 信息</h1>
+{% endblock %}
+
+{% block content_main %}
+
+    {% if available_agent %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th style="text-align: center">Agent 名称</th>
+                    <th style="text-align: center">IP</th>
+                    <th style="text-align: center">端口</th>
+                    <th style="text-align: center">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for agent in available_agent %}
+                    <tr style="text-align: center" agent_id="{{ agent.id }}">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ agent.AgentName }}</td>
+                        <td>{{ agent.AgentIP }}</td>
+                        <td>{{ agent.AgentPort }}</td>
+                        <td>
+                            <button type="button" class="btn btn-info" data-toggle="modal" name="delagent"
+                                    data-target="#delhost" agent_id="{{ agent.id }}" agent_addr="{{ agent.AgentIP }}">
+                                删除
+                            </button>
+
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <h4 style="text-align: center">没有可用的Agent</h4>
+    {% endif %}
+{% endblock %}
+{% block content_bottom %}
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $("[name='delagent']").click(function () {
+            $.ajax({
+                url: '/delete_agent.html',
+                type: 'post',
+                dataType: 'json',
+                data: {'id': $(this).attr('agent_id'), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                success: function (data) {
+                    if (data.status) {
+                        window.location.href = '/agent_info.html';
+                    }
+                }
+            })
+        });
+    </script>
+
+{% endblock %}
