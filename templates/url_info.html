@@ -28,9 +28,9 @@
                 <tbody>
                 {% for url in available_url %}
                     <tr style="text-align: center" hid="{{ url.id }}">
-                        <td>{{ forloop.counter }}</td>
-                        <td>{{ url.UrlName }}</td>
-                        <td>{{ url.UrlAddress }}</td>
+                        <td style="line-height:inherit">{{ forloop.counter }}</td>
+                        <td style="line-height:inherit">{{ url.UrlName }}</td>
+                        <td style="line-height:inherit">{{ url.UrlAddress }}</td>
                         <td>
                             <button type="button" class="btn btn-info" data-toggle="modal" name="deleurl"
                                     data-target="#delhost" url_id="{{ url.id }}">

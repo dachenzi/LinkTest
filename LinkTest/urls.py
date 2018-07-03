@@ -28,4 +28,5 @@ urlpatterns = [
     url(r'delete_agent.html', GetIpAddress.views.delete_agent),
     url(r'delete_url.html', GetIpAddress.views.delete_url),
     url(r'update', GetIpAddress.views.update),
+    url(r'task_info.html', GetIpAddress.views.task_info),
 ]

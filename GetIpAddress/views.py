@@ -2,11 +2,13 @@ from django.shortcuts import render,HttpResponse,redirect
 import requests
 import json
 import configparser
+
 from django.conf import settings
 from GetIpAddress import models
 from django.forms import Form
 from django.forms import fields
 from django.forms import widgets
+
 # Create your views here.
 
 
@@ -167,7 +169,7 @@ def add_url(request):
         return render(request, 'add_url.html', locals())
 
     if request.method == 'POST':
-        print('begin')
+
         url_add = UrlAdd(request.POST)
         if url_add.is_valid():
             url_obj = models.UrlInfo.objects.filter(UrlAddress=url_add.cleaned_data['UrlName'])
@@ -200,3 +202,18 @@ def update(request):
     if request.method == 'GET':
         update_http_proxy()
         return HttpResponse('ok')
+
+
+def task_info(request):
+    ret_code = {'status': True}
+
+    if request.method == 'GET':
+        available_url = models.UrlInfo.objects.filter(Used=0)
+        return render(request, "task_info.html", {'available_url': available_url})
+
+    if request.method == 'POST':
+        res = request.POST.get('status', None)
+        if res:
+            url_id = request.POST.get('id')
+            models.UrlInfo.objects.filter(id=url_id).update(Checked=int(res))
+        return HttpResponse(json.dumps(ret_code))

@@ -59,7 +59,6 @@
                 <thead>
                 <tr>
                     <th></th>
-                    <th></th>
                     <th style="text-align: center">HTTP代理地址</th>
                     <th style="text-align: center">ISP</th>
                     <th style="text-align: center">过期时间</th>
@@ -69,7 +68,6 @@
                 <tbody>
                 {% for proxy in available_proxy %}
                     <tr style="text-align: center" hid="{{ proxy.id }}">
-                        <td><input type="checkbox"></td>
                         <td>{{ forloop.counter }}</td>
                         <td>{{ proxy.IP }}</td>
                         <td>{{ proxy.ISP }}</td>

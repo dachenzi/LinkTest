@@ -1,0 +1,105 @@
+{% extends 'index.html' %}
+
+{% block css %}
+    <style>
+        .table-responsive {
+            margin-left: 10px
+        }
+        td {
+            line-height:inherit!important;
+        }
+        th{
+            text-align: center
+        }
+    </style>
+{% endblock %}
+
+
+{% block content_title %}
+    <h1 class="page-head-line">Task 信息</h1>
+{% endblock %}
+
+{% block content_main %}
+    {% if available_url %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>名称</th>
+                    <th>Url地址</th>
+                    <th>检测状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for url in available_url %}
+                    <tr style="text-align: center" hid="{{ url.id }}">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ url.UrlName }}</td>
+                        <td>{{ url.UrlAddress }}</td>
+                        <td>
+                            {% if url.Checked == 0 %}
+                                没有检测
+                            {% elif url.Checked == 1 %}
+                                正在检测
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if url.Checked == 0 %}
+                                <button type="button" class="btn btn-success" data-toggle="modal" name="begincheck"
+                                     url_id="{{ url.id }}">
+                                开始
+                            </button>
+                            {% elif url.Checked == 1 %}
+                                <button type="button" class="btn btn-danger" data-toggle="modal" name="stopcheck"
+                                     url_id="{{ url.id }}">
+                                停止
+                            </button>
+                            {% endif %}
+
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <h4 style="text-align: center">没有正在执行的任务</h4>
+    {% endif %}
+{% endblock %}
+
+{% block content_bottom %}
+
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $("[name='begincheck']").click(function () {
+            $.ajax({
+                url: '/task_info.html',
+                type: 'post',
+                dataType: 'json',
+                data: {'id': $(this).attr('url_id'), 'status': 1, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                success: function (data) {
+                    if(data.status){
+                        window.location.href = "/task_info.html"
+                    }
+                }
+            })
+        });
+         $("[name='stopcheck']").click(function () {
+            $.ajax({
+                url: '/task_info.html',
+                type: 'post',
+                dataType: 'json',
+                data: {'id': $(this).attr('url_id'), 'status': 0, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                success:function (data) {
+                    if(data.status){
+                        window.location.href = "/task_info.html"
+                    }
+                }
+            })
+        });
+    </script>
+{% endblock %}

@@ -23,3 +23,4 @@ class UrlInfo(models.Model):
     UrlName = models.CharField(max_length=16, verbose_name='Url名称')
     UrlAddress = models.CharField(max_length=128, verbose_name='Url地址')
     Used = models.IntegerField(default=0)
+    Checked = models.IntegerField(default=0)
