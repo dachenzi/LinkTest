@@ -25,3 +25,9 @@ class UrlInfo(models.Model):
     UrlAddress = models.CharField(max_length=128, verbose_name='Url地址')
     Used = models.IntegerField(default=0)
     Checked = models.IntegerField(default=0)
+
+
+class UserLogin(models.Model):
+    UserName = models.CharField(max_length=16, verbose_name='用户名')
+    Password = models.CharField(max_length=16, verbose_name='密码')
+    Status = models.IntegerField(verbose_name='账号状态')

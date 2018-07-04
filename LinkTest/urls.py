@@ -20,6 +20,7 @@ import GetIpAddress.views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', GetIpAddress.views.index),
+    url(r'login.html', GetIpAddress.views.login),
     url(r'proxy_info.html', GetIpAddress.views.proxy_index),
     url(r'agent_info.html', GetIpAddress.views.agent_index),
     url(r'url_info.html', GetIpAddress.views.url_index),

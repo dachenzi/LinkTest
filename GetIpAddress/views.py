@@ -71,6 +71,17 @@ class UrlAdd(Form):
     )
 
 
+class LoginCheck(Form):   # 登陆时的form表单验证
+    username = fields.CharField(
+        error_messages={'required':'用户名不能为空'},
+        widget=widgets.TextInput(attrs={'class': 'form-control', 'placeholder': '用户名'})
+    )
+    password = fields.CharField(
+        error_messages={'required':'密码不能为空'},
+        widget=widgets.PasswordInput(attrs={'class': 'form-control', 'placeholder': '密 码'})
+    )
+
+
 def update_http_proxy():
     cp = configparser.ConfigParser()
     cp.read(settings.API_FILE)
@@ -83,6 +94,35 @@ def update_http_proxy():
             models.HttpProxyInfo.objects.create(**http_proxy)
     except Exception as e:
         pass
+
+
+def login(request):
+
+    # 定义返回数据字典
+    ret_code = {'status': True, 'error_msg': {}}
+
+    if request.method == 'GET':
+        return render(request, 'login.html')
+
+    if request.method == 'POST':
+        lc = LoginCheck(data=request.POST)
+        if lc.is_valid():
+            user = lc.cleaned_data['username']
+            pwd = lc.cleaned_data['password']
+            user_obj = models.UserLogin.objects.filter(UserName=user, Password=pwd)
+            if not user_obj:
+                ret_code['status'] = False
+                ret_code['error_msg'] = {}  # 初始化错误信息
+                ret_code['error_msg']['username'] = '用户名或密码不正确！'
+            else:
+                request.session['user'] = user
+        else:
+            ret_code['status'] = False
+            ret_code['error_msg'] = lc.errors  # 返回错误信息
+
+        return HttpResponse(json.dumps(ret_code))
+
+
 
 
 def index(request):
