@@ -1,13 +1,16 @@
-from django.shortcuts import render,HttpResponse,redirect
 import requests
 import json
 import configparser
-
+import os
+import time
+from django.shortcuts import render, HttpResponse, redirect
 from django.conf import settings
 from GetIpAddress import models
+from GetIpAddress import cron
 from django.forms import Form
 from django.forms import fields
 from django.forms import widgets
+from multiprocessing import Process
 
 # Create your views here.
 
@@ -33,6 +36,13 @@ class AgentAdd(Form):
                         'invalid': '端口范围错误',
                         'max_value': '最大端口范围为65535'},
         widget=widgets.TextInput(attrs={'class': 'form-control', 'id': 'AgentPort', 'placeholder': " 0",
+                                        })
+    )
+    Api = fields.CharField(
+        max_length=32,
+        error_messages={'required': 'Api接口不能为空',
+                        'max_length': 'Api接口不能超过32位'},
+        widget=widgets.TextInput(attrs={'class': 'form-control', 'id': 'Api', 'placeholder': "/api/index.html",
                                         })
     )
     Key = fields.CharField(
@@ -216,4 +226,24 @@ def task_info(request):
         if res:
             url_id = request.POST.get('id')
             models.UrlInfo.objects.filter(id=url_id).update(Checked=int(res))
+            url_address = models.UrlInfo.objects.filter(id=url_id).first().UrlAddress
+            url_name = url_address.split('/')[2]
+            url_file = "{}{}{}-{}".format(settings.HTTP_DATA, os.path.sep, url_id, url_name)
+            with open(url_file, 'w') as f:
+                if res == '0':
+                    flag = 'stop'
+                elif res == '1':
+                    flag = 'start'
+                f.write(flag)
+            http_proxy_list = models.HttpProxyInfo.objects.filter(Used=0)
+            agent_list = list(models.AgentInfo.objects.filter(Used=0).values_list('AgentIP', 'AgentPort', 'Api'))
+            available_proxy = []
+            for http_proxy in http_proxy_list:
+                expire = time.mktime(time.strptime(http_proxy.ExpireTime, '%Y-%m-%d %H:%M:%S'))
+                if expire < time.time():
+                    models.HttpProxyInfo.objects.filter(id=http_proxy.id).update(Used=1)
+                else:
+                    available_proxy.append((http_proxy.IP, http_proxy.IpAddress))
+            p = Process(target=cron.auto_task, args=(url_file, available_proxy, agent_list, url_address))
+            p.start()
         return HttpResponse(json.dumps(ret_code))

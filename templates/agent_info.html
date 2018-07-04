@@ -5,10 +5,12 @@
         .table-responsive {
             margin-left: 10px
         }
+
         td {
-            line-height:inherit!important;
+            line-height: inherit !important;
         }
-        th{
+
+        th {
             text-align: center
         }
     </style>
@@ -30,6 +32,7 @@
                     <th>Agent 名称</th>
                     <th>IP</th>
                     <th>端口</th>
+                    <th>API</th>
                     <th>操作</th>
                 </tr>
                 </thead>
@@ -40,6 +43,7 @@
                         <td>{{ agent.AgentName }}</td>
                         <td>{{ agent.AgentIP }}</td>
                         <td>{{ agent.AgentPort }}</td>
+                        <td>{{ agent.Api }}</td>
                         <td>
                             <button type="button" class="btn btn-info" data-toggle="modal" name="delagent"
                                     data-target="#delhost" agent_id="{{ agent.id }}" agent_addr="{{ agent.AgentIP }}">
