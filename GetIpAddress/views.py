@@ -77,6 +77,7 @@ def update_http_proxy():
     api_address = cp.get('api', 'api_address')
     try:
         response = requests.get(api_address)
+        print(response.text)
         http_proxy_list = json.loads(response.text)['data']
         for http_proxy in http_proxy_list:
             models.HttpProxyInfo.objects.create(**http_proxy)
@@ -126,25 +127,27 @@ def add_agent(request):
                 ret_code['err_msg'] = {'AgentIP': 'IP:Port已存在!'}
             else:
                 ret_code['status'] = True
-                agent_url = 'http://{}:{}/auth'.format(agent_add.cleaned_data['AgentIP'],
+                agent_url = 'http://{}:{}/auth/'.format(agent_add.cleaned_data['AgentIP'],
                                                        agent_add.cleaned_data['AgentPort'])
-                # retry = 0
-                # print(agent_url)
-                # while retry <= 3:
-                #     try:
-                #         response = requests.post(agent_url, data={'key': agent_add.cleaned_data['Key']}, timeout=1)
-                #         print(response.text())
-                #         if response.text():
-                #             break
-                #         retry += 1
-                #     except Exception as e:
-                #         retry += 1
-                #         continue
-                # else:
-                #     ret_code['status'] = False
-                #     ret_code['err_msg'] = {}
-                #     ret_code['err_msg'] = {'invalid': 'Agent 无响应，请确认Agent地址'}
-                #     return HttpResponse(json.dumps(ret_code))
+
+                # 添加agent时，发送key到agent进行验证(重试3次）
+                retry = 0
+                print(agent_url)
+                while retry <= 3:
+                    try:
+                        response = requests.get(agent_url, params={'key': agent_add.cleaned_data['Key']}, timeout=3)
+                        result = json.loads(response.text)['status']
+                        if result:
+                            break
+                        retry += 1
+                    except Exception as e:
+                        retry += 1
+                        continue
+                else:
+                    ret_code['status'] = False
+                    ret_code['err_msg'] = {}
+                    ret_code['err_msg'] = {'invalid': 'Agent 无响应，请确认Agent地址'}
+                    return HttpResponse(json.dumps(ret_code))
                 models.AgentInfo.objects.create(**agent_add.cleaned_data)
 
         else:
