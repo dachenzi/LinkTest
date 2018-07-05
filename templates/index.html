@@ -32,7 +32,7 @@
                     class="fa fa-envelope-o fa-2x"></i></a>
             <a href="#" class="btn btn-default" title="New Task"><b>40 </b><i
                     class="fa fa-bars fa-2x"></i></a>
-            <a href="#" class="btn btn-default" title="Logout"><i
+            <a href="/logout" class="btn btn-default" title="Logout"><i
                     class="fa fa-exclamation-circle fa-2x"></i></a>
         </div>
     </nav>
@@ -42,11 +42,11 @@
             <ul class="nav" id="main-menu">
                 <li>
                     <div class="user-img-div" style="background-color: #202020">
-                        <img src="{% static 'images/logo.jpg' %}" class="img-thumbnail"/>
+                        <img src="{% static 'image/logo/logo.jpg' %}" class="img-thumbnail"/>
                         <div class="inner-text">
                             {{ request.session.user }}
                             <br/>
-                            <small>上一次登陆时间：2017/09/21</small>
+                            <small>{{ request.session.time_login }}</small>
                         </div>
                     </div>
                 </li>
@@ -70,7 +70,7 @@
 
                     </ul>
                 </li>
-                 <li>
+                <li>
                     <a href="#" class="title"><i
                             class="glyphicon glyphicon-globe"></i>Url<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
@@ -197,6 +197,14 @@
 <script src="{% static 'js/custom.js' %}"></script>
 
 {% block javascript %}
+    <script>
+        $(function () {
+            var now = new Date();
+            var myDate = now.toLocaleDateString();
+            $('#time_now').text(myDate);
+        })
+    </script>
+
 {% endblock %}
 
 </body>

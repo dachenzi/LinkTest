@@ -130,3 +130,5 @@ API_FILE = "{}/{}".format(API_DIRS, API_CONF)
 
 HTTP_DATA = os.path.join(BASE_DIR, 'data')
 AGENT_API = 'api'
+
+SESSION_COOKIE_AGE = 60 * 5

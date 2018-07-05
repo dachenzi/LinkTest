@@ -11,7 +11,7 @@ from django.forms import Form
 from django.forms import fields
 from django.forms import widgets
 from multiprocessing import Process
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # Create your views here.
 
 
@@ -83,17 +83,27 @@ class LoginCheck(Form):   # 登陆时的form表单验证
 
 
 def update_http_proxy():
+    ret_code = {'status': True, 'msg': ""}
     cp = configparser.ConfigParser()
     cp.read(settings.API_FILE)
     api_address = cp.get('api', 'api_address')
     try:
         response = requests.get(api_address)
-        print(response.text)
-        http_proxy_list = json.loads(response.text)['data']
-        for http_proxy in http_proxy_list:
-            models.HttpProxyInfo.objects.create(**http_proxy)
+        response = json.loads(response.text, encoding='UTF-8')
+        # print(response)
+        if response['success'] == 'true':
+            http_proxy_list = response['data']
+            for http_proxy in http_proxy_list:
+                models.HttpProxyInfo.objects.create(**http_proxy)
+                ret_code['status'] = True
+        else:
+            ret_code['status'] = False
+            ret_code['msg'] = response['msg']
+            # print(ret_code)
+        return ret_code
     except Exception as e:
-        pass
+        ret_code['status'] = False
+        return ret_code
 
 
 def login(request):
@@ -116,11 +126,21 @@ def login(request):
                 ret_code['error_msg']['username'] = '用户名或密码不正确！'
             else:
                 request.session['user'] = user
+                request.session['time_login'] = '本次登陆时间: {}'.format(time.strftime('%Y-%m-%d %H:%M:%S'))
+                return redirect('/')
         else:
             ret_code['status'] = False
             ret_code['error_msg'] = lc.errors  # 返回错误信息
 
         return HttpResponse(json.dumps(ret_code))
+
+
+def logout(request):
+
+    if request.method == 'GET':
+        request.session.clear()
+
+        return redirect('/login.html')
 
 
 
@@ -139,7 +159,17 @@ def proxy_index(request):
 
     if request.method == 'GET':
         available_proxy = models.HttpProxyInfo.objects.filter(Used=0)
-        return render(request, 'proxy_info.html', {'available_proxy': available_proxy})
+        paginator = Paginator(available_proxy, 20)
+        page = request.GET.get('page')
+        try:
+            contacts = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            contacts = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            contacts = paginator.page(paginator.num_pages)
+        return render(request, 'proxy_info.html', {'available_proxy': contacts})
 
 
 def agent_index(request):
@@ -253,8 +283,8 @@ def delete_url(request):
 def update(request):
 
     if request.method == 'GET':
-        update_http_proxy()
-        return HttpResponse('ok')
+        res = update_http_proxy()
+        return HttpResponse(json.dumps(res))
 
 
 def task_info(request):

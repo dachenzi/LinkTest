@@ -1,4 +1,6 @@
 {% extends 'index.html' %}
+{% load pagetag %}
+
 {% block css %}
 
     <style>
@@ -6,25 +8,12 @@
             margin-left: 10px
         }
 
-        #background {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            right: 0;
-            left: 0;
-            background-color: darkgray;
-            opacity: 0.6;
-            z-index: 8;
+        .warning {
+            color: red;
         }
-
-        #delete {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            margin-top: -150px;
-            margin-left: -250px;
-            z-index: 9;
-        }
+    .pagenum {
+        text-align:  center;
+    }
 
     </style>
 
@@ -49,8 +38,11 @@
         {#        <button type="button" class="btn btn-danger" name="delete">#}
         {#            删除#}
         {#        </button>#}
-        <button type="button" class="btn btn-success" name="update">
-            更新
+        {#        <button type="button" class="btn btn-success" name="update" data-toggle="modal" data-target="updateproxy" >#}
+        {#            更新#}
+        {#        </button>#}
+        <button class="btn btn-success btn-lg" name="update" data-toggle="modal" data-target="#updateproxy">
+            更新Proxy列表
         </button>
     </div>
     {% if available_proxy %}
@@ -85,6 +77,59 @@
 {% endblock %}
 
 {% block content_bottom %}
+    {% if available_proxy %}
+
+        <nav aria-label="Page navigation" class="pagenum">
+            <ul class="pagination">
+                {% if available_proxy.has_previous %}
+                    <li>
+                        <a href="?page={{ available_proxy.previous_page_number }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for pg in available_proxy.paginator.page_range %}
+                    {% circle_page available_proxy.number pg %}
+                {% endfor %}
+
+                {% if cus_list.has_next %}
+                    <li>
+                        <a href="?page={{ available_proxy.next_page_number }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+
+    <div class="modal fade" id="updateproxy" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        提示信息
+                    </h4>
+                </div>
+                <div class="modal-body" name="message">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">确定
+                    </button>
+                    {#                    <button type="button" class="btn btn-primary">#}
+                    {#                        确定#}
+                    {#                    </button>#}
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
 {% endblock %}
 
 {% block javascript %}
@@ -108,13 +153,20 @@
         });
 
         $("[name='update']").click(function () {
+            $("[name='message']").html('请稍等，正在更新中...');
+
             $.ajax({
                 url: '/update',
                 type: 'get',
                 success: function (data) {
-                    if (data.status) {
-                        {#window.location.href = '/proxy_info.html'#}
-                        window.location.href = '/proxy_info.html'
+                    data = JSON.parse(data);
+                    console.log('-->', data);
+                    console.log('status', data['status']);
+                    if (data['status']) {
+                        console.log('success');
+                        {#window.location.href = '/proxy_info.html';#}
+                    } else {
+                        $("[name='message']").html('访问API错误，返回信息为：' + data['msg']);
                     }
                 }
             })
