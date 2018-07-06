@@ -11,9 +11,10 @@
         .warning {
             color: red;
         }
-    .pagenum {
-        text-align:  center;
-    }
+
+        .pagenum {
+            text-align: center;
+        }
 
     </style>
 
@@ -41,9 +42,11 @@
         {#        <button type="button" class="btn btn-success" name="update" data-toggle="modal" data-target="updateproxy" >#}
         {#            更新#}
         {#        </button>#}
-        <button class="btn btn-success btn-lg" name="update" data-toggle="modal" data-target="#updateproxy">
-            更新Proxy列表
-        </button>
+        {#        <button class="btn btn-success btn-lg" name="update" data-toggle="modal" data-target="#updateproxy">#}
+        {#            更新Proxy列表#}
+        {#        </button>#}
+        <a class="btn btn-success" href="#" name="update" data-toggle="modal" data-target="#updateproxy">
+            <i class="fa fa-refresh " id="refresh" ></i>&nbsp; Update Proxy</a>
     </div>
     {% if available_proxy %}
         <div class="table-responsive">
@@ -154,6 +157,7 @@
 
         $("[name='update']").click(function () {
             $("[name='message']").html('请稍等，正在更新中...');
+            $('#refresh').addClass('fa-spin');
 
             $.ajax({
                 url: '/update',
@@ -167,6 +171,7 @@
                         {#window.location.href = '/proxy_info.html';#}
                     } else {
                         $("[name='message']").html('访问API错误，返回信息为：' + data['msg']);
+                        $('#refresh').removeClass('fa-spin');
                     }
                 }
             })
